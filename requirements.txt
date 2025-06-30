@@ -1,6 +1,6 @@
 streamlit==1.44.1
-earthengine-api==1.5.11
 geemap==0.35.3
+earthengine-api==1.5.11
 pandas
 plotly
-matplotlib
+setuptools>=65.5.0
