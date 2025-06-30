@@ -20,7 +20,7 @@ except:
         st.warning("Falha na autenticação do Earth Engine. Verifique suas credenciais.")
 
 st.set_page_config(layout='wide')
-st.title("\U0001f30e DASHBOARD - ANÁLISE DE USO E COBERTURA DA TERRA NO MARANHÃO")
+st.title("\U0001F331 APP MAPBIOMAS LAGEOS/LAB - MARANHÃO")
 st.write("Análise de cobertura do solo para municípios do Maranhão usando MapBiomas Collection 9")
 
 # Carregar GeoJSON com municípios
