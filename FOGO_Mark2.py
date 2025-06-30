@@ -12,16 +12,24 @@ import shapefile  # pyshp
 # Defina a configuração da página primeiro!
 st.set_page_config(layout='wide')
 
-# Inicialização do Earth Engine
-try:
-    ee.Initialize(project='ee-adilsonborges')
-except:
+# Função para autenticar usando conta de serviço
+def initialize_ee():
     try:
-        ee.Authenticate()
-        ee.Initialize(project='ee-adilsonborges')
-    except:
-        # Mensagem de aviso só depois do set_page_config
-        st.warning("Falha na autenticação do Earth Engine. Verifique suas credenciais.")
+        service_account = 'streamlit-ee-service@streamlit-ee-service.iam.gserviceaccount.com'
+        json_key = st.secrets["GEE_SERVICE_ACCOUNT_JSON"]
+
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as fp:
+            fp.write(json_key)
+            key_path = fp.name
+
+        credentials = ee.ServiceAccountCredentials(service_account, key_path)
+        ee.Initialize(credentials)
+        st.success("✅ Earth Engine autenticado com sucesso!")
+    except Exception as e:
+        st.error(f"❌ Falha na autenticação do Earth Engine: {e}")
+
+# Inicializa o Earth Engine
+initialize_ee()
 
 # Agora você pode usar outros comandos Streamlit
 st.title("🔥 APP MAPBIOMAS FOGO - LAGEOS/LAB MARANHÃO")
@@ -188,10 +196,9 @@ if geometry and anos_selecionados:
     )
     st.plotly_chart(bar_fig, use_container_width=True)
 
-    # GRÁFICO DE ACUMULADO ANUAL
     st.subheader("📊 ACUMULADO ANUAL DAS ÁREAS COM FOGO")
     df_ano = df_agg.groupby(['Ano', 'Nome da Classe'])['Área (km²)'].sum().reset_index()
-    df_ano['Ano'] = df_ano['Ano'].astype(str)  # Converte ano para string
+    df_ano['Ano'] = df_ano['Ano'].astype(str)
     bar_ano = px.bar(
         df_ano,
         x="Ano",
