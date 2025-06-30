@@ -3,11 +3,11 @@ import geemap.foliumap as geemap
 import ee
 import json
 import pandas as pd
-import geopandas as gpd
 import tempfile
 import os
 import plotly.express as px
 import matplotlib.pyplot as plt
+import shapefile  # pyshp
 
 # Inicialização do Earth Engine
 try:
@@ -79,15 +79,22 @@ with st.expander("Defina a área de estudo", expanded=True):
 if uploaded_files:
     try:
         with tempfile.TemporaryDirectory() as temp_dir:
+            file_paths = {}
             for file in uploaded_files:
-                with open(os.path.join(temp_dir, file.name), "wb") as f:
+                file_path = os.path.join(temp_dir, file.name)
+                file_paths[file.name.split('.')[-1]] = file_path
+                with open(file_path, "wb") as f:
                     f.write(file.getbuffer())
-            shp_files = [f for f in os.listdir(temp_dir) if f.endswith('.shp')]
-            if shp_files:
-                gdf = gpd.read_file(os.path.join(temp_dir, shp_files[0]))
-                geojson = json.loads(gdf.to_json())
-                geometry = ee.Geometry(geojson['features'][0]['geometry'])
-                area_name = geojson['features'][0]['properties'].get('name') or 'Área Carregada'
+
+            if {'shp', 'dbf', 'shx'}.issubset(file_paths.keys()):
+                sf = shapefile.Reader(shp=file_paths['shp'], dbf=file_paths['dbf'], shx=file_paths['shx'])
+                shape = sf.shapes()[0]
+                geojson_geom = {
+                    "type": "Polygon",
+                    "coordinates": [shape.points]
+                }
+                geometry = ee.Geometry(geojson_geom)
+                area_name = 'Shapefile Carregado'
                 st.success("Shapefile carregado com sucesso!")
     except Exception as e:
         st.error(f"Erro: {str(e)}")
