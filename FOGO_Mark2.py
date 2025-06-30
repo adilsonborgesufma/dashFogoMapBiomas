@@ -9,6 +9,9 @@ import plotly.express as px
 import matplotlib.pyplot as plt
 import shapefile  # pyshp
 
+# Defina a configuração da página primeiro!
+st.set_page_config(layout='wide')
+
 # Inicialização do Earth Engine
 try:
     ee.Initialize(project='ee-adilsonborges')
@@ -17,9 +20,10 @@ except:
         ee.Authenticate()
         ee.Initialize(project='ee-adilsonborges')
     except:
+        # Mensagem de aviso só depois do set_page_config
         st.warning("Falha na autenticação do Earth Engine. Verifique suas credenciais.")
 
-st.set_page_config(layout='wide')
+# Agora você pode usar outros comandos Streamlit
 st.title("🔥 APP MAPBIOMAS FOGO - LAGEOS/LAB MARANHÃO")
 st.write("Análise de focos de fogo mensais a partir do MapBiomas Fogo Collection 4")
 
