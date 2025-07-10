@@ -59,9 +59,9 @@ matplotlib==3.10.1
 matplotlib-inline==0.1.7
 narwhals==1.35.0
 nest-asyncio==1.6.0
-numpy==2.2.4
+numpy==1.24.4
+pandas==1.5.3
 packaging==24.2
-pandas==2.2.3
 parso==0.8.4
 pillow==11.2.1
 platformdirs==4.3.7
